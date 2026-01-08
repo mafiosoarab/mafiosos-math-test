@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي رياضيات السعودية 1447هـ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #006C35;
+            --dark: #1a1a1a;
+            --gold: #d4af37;
+            --bg: #f4f4f4;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), #004422);
+            padding: 20px;
+            color: white;
+        }
+        .header h1 { margin: 0; font-size: 1.5rem; }
+        .header p { margin: 5px 0 0; opacity: 0.8; font-size: 0.9rem; }
+
+        /* Screens */
+        .screen { display: none; padding: 30px 20px; }
+        .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        
+        /* Quiz Styles */
+        .question-box { font-size: 1.3rem; font-weight: bold; margin-bottom: 30px; color: var(--dark); }
+        .options-grid { display: grid; gap: 10px; }
+        .option-btn { background: #eee; color: #333; padding: 15px; border-radius: 10px; border: none; font-size: 1rem; cursor: pointer; }
+        .option-btn:hover { background: #e0e0e0; }
+
+        /* Result Card (Designed for Screenshots) */
+        .result-card {
+            border: 4px solid var(--primary);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            background: #fff url('https://www.transparenttextures.com/patterns/arabesque.png');
+        }
+        .level-badge {
+            background: var(--gold);
+            color: var(--dark);
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+        }
+        .score-display { font-size: 3rem; color: var(--primary); font-weight: 900; margin: 10px 0; }
+        
+        /* Social Icons */
+        .share-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .share-btn { width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; }
+        .whatsapp { background: #25D366; }
+        .twitter { background: #000000; }
+        .native { background: var(--primary); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="start-screen" class="screen active">
+        <div class="header" style="border-radius: 0 0 20px 20px; margin: -30px -20px 30px -20px;">
+            <h1>تحدي الرياضيات 1447هـ</h1>
+            <p>اختبر مستواك وشارك نتيجتك</p>
+        </div>
+        <h3>اختر مرحلتك الدراسية:</h3>
+        <button class="btn btn-outline" onclick="startQuiz(7)">أول متوسط (Grade 7)</button>
+        <button class="btn btn-outline" onclick="startQuiz(8)">ثاني متوسط (Grade 8)</button>
+        <button class="btn btn-outline" onclick="startQuiz(9)">ثالث متوسط (Grade 9)</button>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; color: #888;">
+            <span id="q-progress">سؤال 1 / 5</span>
+            <span id="grade-label"></span>
+        </div>
+        <div class="question-box" id="question-text">
+            ...
+        </div>
+        <div class="options-grid" id="options-container">
+            </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h2>نتيجتك النهائية</h2>
+        <p style="color: #666; margin-bottom: 20px;">صور الشاشة وشاركها في سناب شات!</p>
+        
+        <div class="result-card" id="share-card">
+            <div class="level-badge" id="level-badge">عبقري رياضيات</div>
+            <div style="margin-top: 10px;">لقد حققت في تحدي الرياضيات:</div>
+            <div class="score-display" id="final-score">100%</div>
+            <div style="font-size: 0.9rem; color: #555;">الصف: <span id="result-grade"></span> - عام 1447هـ</div>
+            <div style="margin-top: 15px; font-size: 0.8rem; opacity: 0.7;">منصة رياضيات السعودية</div>
+        </div>
+
+        <div class="share-buttons">
+            <button class="share-btn whatsapp" onclick="shareTo('whatsapp')">Wait</button>
+            <button class="share-btn twitter" onclick="shareTo('twitter')">𝕏</button>
+            <button class="share-btn native" onclick="shareNative()">🔗</button>
+        </div>
+        <br>
+        <button class="btn" onclick="location.reload()">اختبار جديد</button>
+    </div>
+
+</div>
+
+<script>
+    // Database of Questions (Sample)
+    const db = {
+        7: [
+            { q: "ما قيمة العبارة: -٥ + ٨ ؟", options: ["3", "-3", "13", "-13"], ans: 0 },
+            { q: "حل المعادلة: س + ٤ = ١٠", options: ["٤", "٥", "٦", "-٦"], ans: 2 },
+            { q: "العدد الأولي من بين الأعداد التالية هو:", options: ["٩", "١٥", "١٣", "٢١"], ans: 2 },
+            { q: "قيمة ٣ أس ٢ (٣²):", options: ["٦", "٩", "٥", "٨"], ans: 1 },
+            { q: "ما هو العنصر المحايد في عملية الضرب؟", options: ["٠", "١", "١٠", "-١"], ans: 1 }
+        ],
+        8: [
+            { q: "نظرية فيثاغورس تطبق على المثلث:", options: ["حاد الزوايا", "قائم الزاوية", "منفرج الزاوية", "متطابق الأضلاع"], ans: 1 },
+            { q: "العدد النسبي هو العدد الذي يمكن كتابته على صورة:", options: ["كسر أ/ب", "جذر أصم", "عدد عشري غير منته", "لا شيء مما سبق"], ans: 0 },
+            { q: "ناتج قسمة قوى لها نفس الأساس:", options: ["نجمع الأسس", "نطرح الأسس", "نضرب الأسس", "نقسم الأسس"], ans: 1 },
+            { q: "تحويل ٢٥٪ إلى كسر عشري:", options: ["٢.٥", "٠.٢٥", "٠.٠٢٥", "٢٥.٠"], ans: 1 },
+            { q: "مساحة الدائرة تساوي:", options: ["٢ ط نق", "ط نق²", "ط نق", "٢ ط نق²"], ans: 1 }
+        ],
+        9: [
+            { q: "ميل المستقيم الموازي لمحور السينات يساوي:", options: ["صفر", "غير معرف", "١", "-١"], ans: 0 },
+            { q: "حل النظام: ص = ٢س ، ص = ٦", options: ["(٢، ٦)", "(٣، ٦)", "(٦، ٣)", "(٣، ٢)"], ans: 1 },
+            { q: "تحليل وحيدة الحد ١٢س ص:", options: ["٢×٦×س×ص", "٣×٤×س×ص", "٢×٢×٣×س×ص", "١٢×س×ص"], ans: 2 },
+            { q: "المميز في المعادلة التربيعية يحدد:", options: ["حلول المعادلة", "عدد الحلول", "إشارة الحل", "مكان الحل"], ans: 1 },
+            { q: "أي مما يلي يمثل معادلة خطية؟", options: ["ص = س²", "ص = ٥س + ١", "ص = ١/س", "س ص = ٥"], ans: 1 }
+        ]
+    };
+
+    let currentGrade = 0;
+    let currentQIndex = 0;
+    let score = 0;
+    let questions = [];
+
+    // Screen Elements
+    const screens = {
+        start: document.getElementById('start-screen'),
+        quiz: document.getElementById('quiz-screen'),
+        result: document.getElementById('result-screen')
+    };
+
+    function showScreen(name) {
+        Object.values(screens).forEach(s => s.classList.remove('active'));
+        screens[name].classList.add('active');
+    }
+
+    function startQuiz(grade) {
+        currentGrade = grade;
+        currentQIndex = 0;
+        score = 0;
+        // Shuffle questions loosely or take first 5
+        questions = db[grade]; 
+        
+        document.getElementById('grade-label').innerText = grade === 7 ? "أول متوسط" : grade === 8 ? "ثاني متوسط" : "ثالث متوسط";
+        
+        showScreen('quiz');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if(currentQIndex >= questions.length) {
+            finishQuiz();
+            return;
+        }
+
+        const qData = questions[currentQIndex];
+        document.getElementById('q-progress').innerText = `سؤال ${currentQIndex + 1} / ${questions.length}`;
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const optionsHTML = document.getElementById('options-container');
+        optionsHTML.innerHTML = ''; // clear old options
+
+        qData.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index);
+            optionsHTML.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex) {
+        if(selectedIndex === questions[currentQIndex].ans) {
+            score++;
+        }
+        currentQIndex++;
+        loadQuestion();
+    }
+
+    function finishQuiz() {
+        const percentage = (score / questions.length) * 100;
+        document.getElementById('final-score').innerText = percentage + "%";
+        document.getElementById('result-grade').innerText = currentGrade === 7 ? "أول متوسط" : currentGrade === 8 ? "ثاني متوسط" : "ثالث متوسط";
+
+        // Determine Level/Title
+        const badge = document.getElementById('level-badge');
+        let title = "";
+        let msg = "";
+
+        if(percentage === 100) {
+            title = "👑 عبقري رياضيات";
+            badge.style.background = "#d4af37"; // Gold
+            msg = "أنا عبقري الرياضيات! جبت 100% في تحدي المنهج السعودي 🔥";
+        } else if (percentage >= 80) {
+            title = "🌟 طالب متميز";
+            badge.style.background = "#silver";
+            msg = "حققت نتيجة ممتازة في تحدي الرياضيات السعودي 💪";
+        } else if (percentage >= 60) {
+            title = "👍 جيد جداً";
+            badge.style.background = "#cd7f32"; // Bronze
+            msg = "جربت تحدي الرياضيات، مين يقدر يتحداني؟";
+        } else {
+            title = "📚 يحتاج مراجعة";
+            badge.style.background = "#ddd";
+            msg = "قاعد أذاكر رياضيات للمنهج السعودي، ادعولي!";
+        }
+        
+        badge.innerText = title;
+        window.shareMsg = msg; // Store for sharing
+
+        showScreen('result');
+    }
+
+    // Social Sharing Logic
+    function shareNative() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'تحدي رياضيات السعودية',
+                text: window.shareMsg,
+                url: window.location.href,
+            });
+        } else {
+            alert("انسخ الرابط وشاركه مع أصدقائك!");
+        }
+    }
+
+    function shareTo(platform) {
+        const text = encodeURIComponent(window.shareMsg + "\n" + window.location.href);
+        if(platform === 'whatsapp') {
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        } else if (platform === 'twitter') {
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+        }
+    }
+</script>
+
+</body>
+</html>
